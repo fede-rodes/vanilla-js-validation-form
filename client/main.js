@@ -1,18 +1,10 @@
 import $ from 'jquery';
 
 //------------------------------------------------------------------------------
-// AUX FUNCTIONS:
-//------------------------------------------------------------------------------
-function isValidEmailAddress(email) {
-  var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i;
-  return re.test(email);
-};
-
-//------------------------------------------------------------------------------
 // FORM CLASS:
 //------------------------------------------------------------------------------
 // Class constructor
-function Form() {
+function PGCustomValidationForm() {
   // Store reference of DOM form field elements
   this.form = document.getElementById('ninja_forms_form_32_all_fields_wrap');
   this.formError = document.getElementById('ninja_forms_field_238_error');
@@ -30,7 +22,7 @@ function Form() {
 }
 
 // Class methods
-Form.prototype.handleSubmit = function() {
+PGCustomValidationForm.prototype.handleSubmit = function() {
   var self = this;
 
   // Check that all element references are reachable
@@ -78,7 +70,7 @@ Form.prototype.handleSubmit = function() {
   });
 }
 
-Form.prototype.checkElementsLoaded = function() {
+PGCustomValidationForm.prototype.checkElementsLoaded = function() {
   if (!this.name || !this.postalCode || !this.email || !this.phoneNumber ||
       !this.nameError || !this.postalCodeError || !this.emailError || !this.phoneNumberError ||
       !this.submitBtn
@@ -88,7 +80,7 @@ Form.prototype.checkElementsLoaded = function() {
   return true;
 }
 
-Form.prototype.disableFormFields = function() {
+PGCustomValidationForm.prototype.disableFormFields = function() {
   this.name.disabled = true;
   this.postalCode.disabled = true;
   this.email.disabled = true;
@@ -96,7 +88,7 @@ Form.prototype.disableFormFields = function() {
   this.submitBtn.disabled = true;
 }
 
-Form.prototype.enableFormFields = function() {
+PGCustomValidationForm.prototype.enableFormFields = function() {
   this.name.disabled = false;
   this.postalCode.disabled = false;
   this.email.disabled = false;
@@ -104,7 +96,7 @@ Form.prototype.enableFormFields = function() {
   this.submitBtn.disabled = false;
 }
 
-Form.prototype.clearErrors = function() {
+PGCustomValidationForm.prototype.clearErrors = function() {
   this.errors = [];
   this.formError.innerHTML = '';
   this.formError.style.display = 'none';
@@ -118,7 +110,7 @@ Form.prototype.clearErrors = function() {
   this.phoneNumberError.style.display = 'none';
 }
 
-Form.prototype.gatherCustomerData = function() {
+PGCustomValidationForm.prototype.gatherCustomerData = function() {
   this.customerData = {
     name: this.name.value.trim(),
     postalCode: this.postalCode.value.trim(),
@@ -127,7 +119,12 @@ Form.prototype.gatherCustomerData = function() {
   };
 }
 
-Form.prototype.checkCustomerData = function() {
+PGCustomValidationForm.prototype.isValidEmailAddress = function(email) {
+  var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i;
+  return re.test(email);
+}
+
+PGCustomValidationForm.prototype.checkCustomerData = function() {
   if (!this.customerData.name || this.customerData.name.length === 0) {
     this.errors.push({
       elemName: 'name',
@@ -152,7 +149,7 @@ Form.prototype.checkCustomerData = function() {
       errorMsg: 'Email is required',
     });
   }
-  if (!isValidEmailAddress(this.customerData.email)) {
+  if (!this.isValidEmailAddress.apply(this, [this.customerData.email])) {
     this.errors.push({
       elemName: 'email',
       errorMsg: 'Please, provide a valid email address',
@@ -166,7 +163,7 @@ Form.prototype.checkCustomerData = function() {
   }
 }
 
-Form.prototype.displayErrorOnUI = function(error) {
+PGCustomValidationForm.prototype.displayErrorOnUI = function(error) {
   var elemNameError = error.elemName + 'Error';
   var errorMsg = error.errorMsg;
 
@@ -175,7 +172,7 @@ Form.prototype.displayErrorOnUI = function(error) {
   this[elemNameError].innerHTML = errorMsg;
 }
 
-Form.prototype.performAJAXCall = function() {
+PGCustomValidationForm.prototype.performAJAXCall = function() {
   // HAVEN'T USED AJAX IN A WHILE, THE FOLLOWING EXAMPLE COULD BE WRONG!
   var self = this;
 
@@ -202,7 +199,7 @@ Form.prototype.performAJAXCall = function() {
   }); */
 }
 
-Form.prototype.hideCustomerForm = function() {
+PGCustomValidationForm.prototype.hideCustomerForm = function() {
   this.form.style.display = 'none';
 }
 
@@ -213,7 +210,7 @@ $(document).ready(function() {
   // Log state
   console.log('document ready!');
 
-  var form = new Form();
+  var form = new PGCustomValidationForm();
 
   form.handleSubmit();
 });
