@@ -6,17 +6,17 @@ import $ from 'jquery';
 // Class constructor
 function PGCustomValidationForm() {
   // Store reference of DOM form field elements
-  this.form = document.getElementById('ninja_forms_form_32_all_fields_wrap');
-  this.formError = document.getElementById('ninja_forms_field_238_error');
-  this.name = document.getElementById('ninja_forms_field_234');
-  this.nameError = document.getElementById('ninja_forms_field_234_error');
-  this.postalCode = document.getElementById('ninja_forms_field_235');
-  this.postalCodeError = document.getElementById('ninja_forms_field_235_error');
-  this.email = document.getElementById('ninja_forms_field_236');
-  this.emailError = document.getElementById('ninja_forms_field_236_error');
-  this.phoneNumber = document.getElementById('ninja_forms_field_237');
-  this.phoneNumberError = document.getElementById('ninja_forms_field_237_error');
-  this.submitBtn = document.getElementById('ninja_forms_field_238');
+  this.form = $('#' + 'ninja_forms_form_32_all_fields_wrap');
+  this.formError = $('#' + 'ninja_forms_field_238_error');
+  this.name = $('#' + 'ninja_forms_field_234');
+  this.nameError = $('#' + 'ninja_forms_field_234_error');
+  this.postalCode = $('#' + 'ninja_forms_field_235');
+  this.postalCodeError = $('#' + 'ninja_forms_field_235_error');
+  this.email = $('#' + 'ninja_forms_field_236');
+  this.emailError = $('#' + 'ninja_forms_field_236_error');
+  this.phoneNumber = $('#' + 'ninja_forms_field_237');
+  this.phoneNumberError = $('#' + 'ninja_forms_field_237_error');
+  this.submitBtn = $('#' + 'ninja_forms_field_238');
   this.customerData = {};
   this.errors = [];
 }
@@ -35,7 +35,7 @@ PGCustomValidationForm.prototype.handleSubmit = function() {
   console.log('all form element were loaded correctly!');
 
   // Attach 'click' event listener to submit button
-  this.submitBtn.addEventListener('click', function (evt) {
+  this.submitBtn.click(function (evt) {
     // Prevent the page to reaload
     evt.preventDefault();
 
@@ -71,9 +71,9 @@ PGCustomValidationForm.prototype.handleSubmit = function() {
 }
 
 PGCustomValidationForm.prototype.checkElementsLoaded = function() {
-  if (!this.name || !this.postalCode || !this.email || !this.phoneNumber ||
-      !this.nameError || !this.postalCodeError || !this.emailError || !this.phoneNumberError ||
-      !this.submitBtn
+  if (!this.name[0] || !this.postalCode[0] || !this.email[0] || !this.phoneNumber[0] ||
+      !this.nameError[0] || !this.postalCodeError[0] || !this.emailError[0] || !this.phoneNumberError[0] ||
+      !this.submitBtn[0] || !this.form[0] || !this.formError[0]
     ) {
     return false;
   }
@@ -81,41 +81,41 @@ PGCustomValidationForm.prototype.checkElementsLoaded = function() {
 }
 
 PGCustomValidationForm.prototype.disableFormFields = function() {
-  this.name.disabled = true;
-  this.postalCode.disabled = true;
-  this.email.disabled = true;
-  this.phoneNumber.disabled = true;
-  this.submitBtn.disabled = true;
+  this.name.prop('disabled', true);
+  this.postalCode.prop('disabled', true);
+  this.email.prop('disabled', true);
+  this.phoneNumber.prop('disabled', true);
+  this.submitBtn.prop('disabled', true);
 }
 
 PGCustomValidationForm.prototype.enableFormFields = function() {
-  this.name.disabled = false;
-  this.postalCode.disabled = false;
-  this.email.disabled = false;
-  this.phoneNumber.disabled = false;
-  this.submitBtn.disabled = false;
+  this.name.prop('disabled', false);
+  this.postalCode.prop('disabled', false);
+  this.email.prop('disabled', false);
+  this.phoneNumber.prop('disabled', false);
+  this.submitBtn.prop('disabled', false);
 }
 
 PGCustomValidationForm.prototype.clearErrors = function() {
   this.errors = [];
-  this.formError.innerHTML = '';
-  this.formError.style.display = 'none';
-  this.nameError.innerHTML = '';
-  this.nameError.style.display = 'none';
-  this.postalCodeError.innerHTML = '';
-  this.postalCodeError.style.display = 'none';
-  this.emailError.innerHTML = '';
-  this.emailError.style.display = 'none';
-  this.phoneNumberError.innerHTML = '';
-  this.phoneNumberError.style.display = 'none';
+  this.formError.html('');
+  this.formError.hide();
+  this.nameError.html('');
+  this.nameError.hide();
+  this.postalCodeError.html('');
+  this.postalCodeError.hide();
+  this.emailError.html('');
+  this.emailError.hide();
+  this.phoneNumberError.html('');
+  this.phoneNumberError.hide();
 }
 
 PGCustomValidationForm.prototype.gatherCustomerData = function() {
   this.customerData = {
-    name: this.name.value.trim(),
-    postalCode: this.postalCode.value.trim(),
-    email: this.email.value.trim(),
-    phoneNumber: this.phoneNumber.value.trim(),
+    name: this.name[0].value.trim(),
+    postalCode: this.postalCode[0].value.trim(),
+    email: this.email[0].value.trim(),
+    phoneNumber: this.phoneNumber[0].value.trim(),
   };
 }
 
@@ -140,13 +140,31 @@ PGCustomValidationForm.prototype.checkCustomerData = function() {
   if (!this.customerData.postalCode || this.customerData.postalCode.length === 0) {
     this.errors.push({
       elemName: 'postalCode',
-      errorMsg: 'Postal code is required',
+      errorMsg: 'Post code is required',
+    });
+  }
+  if (this.customerData.postalCode.length > 100) {
+    this.errors.push({
+      elemName: 'postalCode',
+      errorMsg: 'Post code is too long, 100 characters max',
+    });
+  }
+  if (this.customerData.postalCode.length < 2) {
+    this.errors.push({
+      elemName: 'postalCode',
+      errorMsg: 'Post code must be at least 2 characters long',
     });
   }
   if (!this.customerData.email || this.customerData.email.length === 0) {
     this.errors.push({
       elemName: 'email',
       errorMsg: 'Email is required',
+    });
+  }
+  if (this.customerData.email.length > 100) {
+    this.errors.push({
+      elemName: 'email',
+      errorMsg: 'Email is too long, 100 characters max',
     });
   }
   if (!this.isValidEmailAddress.apply(this, [this.customerData.email])) {
@@ -161,15 +179,21 @@ PGCustomValidationForm.prototype.checkCustomerData = function() {
       errorMsg: 'Phone number is required',
     });
   }
+  if (this.customerData.phoneNumber.length > 100) {
+    this.errors.push({
+      elemName: 'phoneNumber',
+      errorMsg: 'Phone number is too long, 100 characters max',
+    });
+  }
 }
 
 PGCustomValidationForm.prototype.displayErrorOnUI = function(error) {
   var elemNameError = error.elemName + 'Error';
   var errorMsg = error.errorMsg;
 
-  this[elemNameError].style.display = 'block';
-  this[elemNameError].style.color = 'red';
-  this[elemNameError].innerHTML = errorMsg;
+  this[elemNameError].show();
+  this[elemNameError].css('color', 'red');
+  this[elemNameError].html(errorMsg);
 }
 
 PGCustomValidationForm.prototype.performAJAXCall = function() {
@@ -200,7 +224,7 @@ PGCustomValidationForm.prototype.performAJAXCall = function() {
 }
 
 PGCustomValidationForm.prototype.hideCustomerForm = function() {
-  this.form.style.display = 'none';
+  this.form.hide();
 }
 
 //------------------------------------------------------------------------------
